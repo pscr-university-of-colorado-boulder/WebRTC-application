@@ -270,7 +270,7 @@ socket.on('offer', function (event) {
                                         }
                                         if(statName === "framesReceived"){
                                                 fps=report[statName]-pfps;
-                                                statsfps.innerText=(report[statName]-pfps);
+                                                statsfps.innerText=fps;
 						pfps=report[statName];
                                         }
                                         if(statName === "framesDropped"){

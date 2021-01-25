@@ -96,7 +96,7 @@ async function extractStats(sender,exp_id,duration) {
 		console.log(line);
 		await sleep(1000);
     	}
-   	var filename='stats_receiver_'+expnum+'.txt';
+   	var filename='webrtc_stats_receiver_'+expnum+'.txt';
     	download(result, filename, 'text/plain');
     }else if(sender==="sender"){
 	let duration = dur;//sandy: Duration you want to collect
@@ -115,7 +115,8 @@ async function extractStats(sender,exp_id,duration) {
 		console.log(line);
 		await sleep(1000);	
 	}
-	download(result, 'stats_sender.txt', 'text/plain');
+   	var filename='webrtc_stats_receiver_'+expnum+'.txt';
+	download(result, filename, 'text/plain');
     }
 }
 

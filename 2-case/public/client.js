@@ -139,8 +139,8 @@ socket.on('ready', function () {
         rtcPeerConnection = new RTCPeerConnection(iceServers);
         rtcPeerConnection.onicecandidate = onIceCandidate;
         rtcPeerConnection.ontrack = onAddStream;
-        rtcPeerConnection.addTrack(localStream.getTracks()[0], localStream);
-        //rtcPeerConnection.addTrack(localStream.getTracks()[1], localStream);
+        //rtcPeerConnection.addTrack(localStream.getTracks()[0], localStream); //Hyoyoung : If the mediinfo has only video enable this else comment this line and use next line
+        rtcPeerConnection.addTrack(localStream.getTracks()[1], localStream);
         rtcPeerConnection.createOffer()
             .then(sessionDescription => {
                 rtcPeerConnection.setLocalDescription(sessionDescription);
@@ -208,7 +208,7 @@ socket.on('offer', function (event) {
 			type=""+report.type
 			var width;
 			var height;
-			var fps;
+			var fpsv;
 			var fd;
 			var nakc;
 			var pl;
@@ -218,7 +218,7 @@ socket.on('offer', function (event) {
 				Object.keys(report).forEach(statName => {
 				//	console.log(" **inbound-rtp** "+statName); 
 				//	console.log("name: "+statName); 
-					if(statName === "frameWidth") {
+				/*	if(statName === "frameWidth") {
 						width=report[statName];
 						statsframeWidth.innerText=report[statName];					
 					}
@@ -233,7 +233,7 @@ socket.on('offer', function (event) {
 					if(statName === "framesDropped"){
 						fd=report[statName];
                                                 statsframesDropped.innerText=report[statName];
-					}
+					}*/
 					if(statName === "nackCount"){
 						nakc=report[statName];
                                                 statsnackCount.innerText=report[statName];
@@ -277,9 +277,10 @@ socket.on('offer', function (event) {
                                                 height=report[statName];
                                                 statsframeHeight.innerText=report[statName];
                                         }
-                                        if(statName === "framesPerSecond"){
-                                                fps=report[statName]-pfps;
-                                                statsfps.innerText=report[statName]-pfps;
+                                        if(statName === "framesReceived"){
+                                                fpsv=report[statName]-pfps;
+                                                statsfps.innerText=fpsv;
+						pfps=report[statName];
                                         }
                                         if(statName === "framesDropped"){
                                                 fd=report[statName];
@@ -287,7 +288,7 @@ socket.on('offer', function (event) {
                                         }
 				});
 			}
-			console.log("width "+ width +" height "+height +" fps " +fps + " framedrop "+ fd+" nack "+nakc +" pps "+pps +" bps "+bps +" pl "+pl +"\n");
+			console.log("width "+ width +" height "+height +" fps " +fpsv + " framedrop "+ fd+" nack "+nakc +" pps "+pps +" bps "+bps +" pl "+pl +"\n");
   		});
 	})}, 1000);
     }
