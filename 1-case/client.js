@@ -23,6 +23,16 @@ var iceServers = {
 
 	}
     ]
+
+    /*'iceServers': [
+        { 'urls': "turn:192.168.2.30:3478?transport=udp",
+           'username':"sandy",
+            'credential': "sandy@12345"
+        }
+    ]*/
+    /*'iceServers': [
+        { 'urls': 'stun:stun.l.google.com:19302' }
+    ]*/
 }
 
 
