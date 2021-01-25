@@ -15,14 +15,15 @@ io.on('connection', function (socket) {
     console.log('a user connected');
 
     socket.on('create or join', function (room) {
-        console.log('create or join to room ', room);
+        console.log(' server : created a room', room);
         
         var myRoom = io.sockets.adapter.rooms[room] || { length: 0 };
         var numClients = myRoom.length;
 
-        console.log(room, ' has ', numClients, ' clients');
+        console.log('sandy: server:', room, ' has ', numClients+1, ' clients');
 
         if (numClients == 0) {
+	    console.log("sandy server: your are first client so create room and joing it");
             socket.join(room);
             socket.emit('created', room);
         } else if (numClients == 1) {

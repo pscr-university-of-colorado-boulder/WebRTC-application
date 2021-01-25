@@ -1,15 +1,29 @@
 // getting dom elements
+var durv;
+var expnumv;
 var divSelectRoom = document.getElementById("selectRoom");
 var divAddVide = document.getElementById('addVideo');
 var divConsultingRoom = document.getElementById("consultingRoom");
 var inputRoomNumber = document.getElementById("roomNumber");
+var dur=document.getElementById("dur");
+var expnum=document.getElementById("expnum");
 var btnGoRoom = document.getElementById("goRoom");
 var localVideo = document.getElementById("localVideo");
 var remoteVideo = document.getElementById("remoteVideo");
 var userType = document.getElementById("user");
-var statsval=document.getElementById("stats-val");
-var statsname=document.getElementById("stats-name");
-var statsname=document.getElementById("rtt");
+var statsrtt=document.getElementById("rtt");
+var statsframeWidth=document.getElementById("frameWidth");
+var statsframeHeight=document.getElementById("frameHeight");
+var statsfps=document.getElementById("fps");
+var statsframesDropped=document.getElementById("framesDropped");
+var statsnackCount=document.getElementById("nackCount");
+var statspps=document.getElementById("pps");
+var statsbps=document.getElementById("bps");
+var statspacketsLost=document.getElementById("packetsLost");
+var rtt=0;
+var pp=0;
+var pb=0;
+var pfps=0;
 // variables
 var fromCaller = false;
 var fromReceiver = false;
@@ -39,6 +53,8 @@ btnGoRoom.onclick = function () {
         alert("Please type a room number")
     } else {
         roomNumber = inputRoomNumber.value;
+	durv=dur.value;
+	expnumv=expnum.value;
         socket.emit('create or join', roomNumber);
         divSelectRoom.style = "display: none;";
         divConsultingRoom.style = "display: block;";
@@ -137,6 +153,29 @@ socket.on('ready', function () {
             .catch(error => {
                 console.log(error)
             })
+	/*let data="Hello world";
+	fs.writeFile('/home/sandesh/workspace/5g/logs/1.txt',data,(err)=>{
+		if(err) throw err;
+	});*/
+	extractStats("sender",expnumv,durv);
+	window.setInterval(function() {
+                rtcPeerConnection.getStats().then(stats => {
+                stats.forEach(report => {
+                        type=""+report.type
+                        if(type==="remote-inbound-rtp"){
+                                var statn=[];
+                                var statv=[];
+                                Object.keys(report).forEach(statName => {
+                                        if(statName ==="roundTripTime"){
+						rtt=report[statName];//converting to ms
+						rtt*=1000;
+						console.log("RTT: "+ rtt);
+                        			statsrtt.innerText=rtt;
+                                        }
+                                });
+                        }
+                });
+        })}, 1000);	
     }
 });
 
@@ -162,25 +201,93 @@ socket.on('offer', function (event) {
             .catch(error => {
                 console.log(error)
             })
+	extractStats("receiver",expnumv,durv);
 	window.setInterval(function() {
   		rtcPeerConnection.getStats().then(stats => {
     		stats.forEach(report => {
 			type=""+report.type
+			var width;
+			var height;
+			var fps;
+			var fd;
+			var nakc;
+			var pl;
+			var pps=0;
+			var bps=0;
 			if(type==="inbound-rtp"){
-				//framew=stats[report]
-				//console.log("sandy stats:w"+framew);
-				var statn=[]
-				var statv=[]
 				Object.keys(report).forEach(statName => {
-					if(statName !== "id" && statName !== "timestamp" && statName !== "type" && statName !== "ssrc" && statName !== "isRemote" && statName !=="mediaType" && statName !=="kind" && statName !== "trackId" && statName !== "transportId"){
-						statn.push(" "+statName);
-						statv.push(" "+report[statName]);
-						//console.log("sandy: "+statName+":"+report[statName]);
+				//	console.log(" **inbound-rtp** "+statName); 
+				//	console.log("name: "+statName); 
+					if(statName === "frameWidth") {
+						width=report[statName];
+						statsframeWidth.innerText=report[statName];					
 					}
+					if(statName === "frameHeight"){
+						height=report[statName];
+                                                statsframeHeight.innerText=report[statName];
+					}
+					if(statName === "framesPerSecond"){
+						fps=report[statName];
+                                                statsframesPerSecond.innerText=report[statName];
+					}
+					if(statName === "framesDropped"){
+						fd=report[statName];
+                                                statsframesDropped.innerText=report[statName];
+					}
+					if(statName === "nackCount"){
+						nakc=report[statName];
+                                                statsnackCount.innerText=report[statName];
+					}
+					if(statName === "packetsReceived"){
+						pps=report[statName]-pp;
+                                                statspps.innerText=pps;
+						pp=report[statName];
+						//console.log("pps  " +pps);
+					}
+					if(statName === "bytesReceived"){
+						bps=(report[statName]-pb)*8;
+                                                statsbps.innerText=bps;
+						pb=report[statName]
+						//console.log("bps  " +bps);
+					}
+					if(statName === "packetsLost"){
+						pl=report[statName];
+                                                statspacketsLost.innerText=report[statName];
+					}
+
 				});
-				statsname.innerText=statn;
-				statsval.innerText =statv;					
-			}	
+			}
+			else if(type==="track"){
+				Object.keys(report).forEach(statName => {
+					/*console.log(" **track** "+statName); 
+					console.log("name: "+statName); 
+					if(statName.indexOf("totalFreezesDuration")>=0){
+						console.log("totalFreezes  " +report[statName]);
+						statstotalFreezesDuration.innerText=report[statName];
+					}
+					if(statName.indexOf("totalPausesDuration")>=0){
+						console.log("totalPause   " +report[statName]);
+						statstotalPausesDuration.innerText=report[statName];
+					}*/
+					if(statName === "frameWidth") {
+                                                width=report[statName];
+                                                statsframeWidth.innerText=report[statName];
+                                        }
+                                        if(statName === "frameHeight"){
+                                                height=report[statName];
+                                                statsframeHeight.innerText=report[statName];
+                                        }
+                                        if(statName === "framesPerSecond"){
+                                                fps=report[statName]-pfps;
+                                                statsfps.innerText=report[statName]-pfps;
+                                        }
+                                        if(statName === "framesDropped"){
+                                                fd=report[statName];
+                                                statsframesDropped.innerText=report[statName];
+                                        }
+				});
+			}
+			console.log("width "+ width +" height "+height +" fps " +fps + " framedrop "+ fd+" nack "+nakc +" pps "+pps +" bps "+bps +" pl "+pl +"\n");
   		});
 	})}, 1000);
     }

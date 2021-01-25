@@ -8,6 +8,13 @@
     <div id="selectRoom">
         <label>Type the room number</label>
         <input id="roomNumber" type="text" />
+	<br/>
+	<label> Type the exp num</label>
+	<input id="expnum" type="text"/>
+	<br/>
+	<label> Enter the duration of exp in sec</label>
+	<input id="dur" type="text"/>
+	<br/>
         <button id="goRoom">Go</button>
     </div>
 
@@ -15,11 +22,30 @@
 	<strong> RTT:</strong>
 	<span id="rtt"></span>
 	<br/>
-	<strong> stats-name:</strong>
-	<span id="stats-name"></span>
+	<strong> frameWidth:</strong>
+	<span id="frameWidth"></span>
 	<br/>
-	<strong> stats-val:</strong>
-	<span id="stats-val"></span>
+	<strong> frameHeight:</strong>
+	<span id="frameHeight"></span>
+	<br/>
+	<strong> framesPerSecond:</strong>
+        <span id="fps"></span>
+        <br/>
+	<strong> framesDropped:</strong>
+        <span id="framesDropped"></span>
+        <br/>
+	<strong> nackCount:</strong>
+        <span id="nackCount"></span>
+        <br/>
+	<strong> packetsReceived/s:</strong>
+        <span id="pps"></span>
+        <br/>
+	<strong> bytesReceived_in_bits/s:</strong>
+        <span id="bps"></span>
+        <br/>
+	<strong> packetsLost:</strong>
+        <span id="packetsLost"></span>
+        <br/>
     </div>
     <div id="addVideo">
     Add a video here:
@@ -36,5 +62,6 @@
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="stats.js"></script>
     <script src="client.js"></script>
 </body>
