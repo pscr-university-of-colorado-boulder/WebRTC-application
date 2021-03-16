@@ -120,3 +120,16 @@ async function extractStats(sender,exp_id,duration) {
     }
 }
 
+async function sandy_recorder(stream,durv){
+ console.log("######### started recording ###############");
+ let recorder = new RecordRTCPromisesHandler(stream, {
+    type: 'video/mp4'});
+ recorder.startRecording();
+ const sleep = m => new Promise(r => setTimeout(r, m));
+ await sleep(durv*1000);//sleep is in ms
+
+ await recorder.stopRecording();
+ console.log("######### stopped recording ###############");
+ let blob = await recorder.getBlob();
+ invokeSaveAsDialog(blob);
+}

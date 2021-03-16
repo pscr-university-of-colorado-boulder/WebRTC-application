@@ -38,7 +38,7 @@ io.on('connection', function (socket) {
     });
 
     socket.on('candidate', function (event){
-	console.log("candidates buddy sandy")
+	//console.log("candidates buddy sandy")
         socket.broadcast.to(event.room).emit('candidate', event);
     });
 
