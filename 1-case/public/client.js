@@ -39,28 +39,29 @@ var remoteStream;
 var rtcPeerConnection;
 let dataChannel;
 var iceServers = {
-   'iceServers': [
+   /*'iceServers': [
         { 'urls': "turn:128.105.145.197?transport=udp",
            'username':"sandy",
             'credential': "sandy@12345"
 
         }
-    ]
+    ]*/
     /*'iceServers': [
         { 'urls': "turn:192.168.2.30:3478?transport=udp",
            'username':"sandy",
             'credential': "sandy@12345"
         }
     ]*/
-    /*'iceServers': [
+	//sandy: Change the ice server if you want to use your own TURN
+    'iceServers': [
         { 'urls': 'stun:stun.l.google.com:19302' }
-    ]*/
+    ]
 
 };
-var streamConstraints = { audio: false, 
+var streamConstraints = { audio: true, 
 			  video: {
-				width: { min: 1024, ideal: 1280, max: 1920 },
-   				 height: { min: 576, ideal: 1080, max: 1080 }//sandy:576,720,1080
+				width: { min: 1096, ideal: 4096, max: 4096 },
+   				 height: { min: 720, ideal: 2160, max: 2160 }//sandy:576,720,1080
   				}
 			}
 
@@ -87,9 +88,6 @@ btnSetName.onclick = () => {
     if (inputCallName.value === '') {
         alert("Please type a name")
     } else {
-	/*if(isCaller){
-        	dataChannel.send(inputCallName.value)
-	}*/
         h2CallName.innerText = inputCallName.value
     }
 }
@@ -107,15 +105,15 @@ socket.on('created', function (room) {
 });
 
 socket.on('joined', function (room) {
-    socket.emit('ready', roomNumber);
-    /*var streamConstraintsrec = { audio: false, video:false }
-    navigator.mediaDevices.getUserMedia(streamConstraintsrec).then(function (stream) {
+    console.log("sandy you joined the room");
+    //socket.emit('ready', roomNumber);
+    navigator.mediaDevices.getUserMedia(streamConstraints).then(function (stream) {
         localStream = stream;
         localVideo.srcObject = stream;
         socket.emit('ready', roomNumber);
     }).catch(function (err) {
         console.log('An error ocurred when accessing media devices', err);
-    });*/
+    });
 });
 
 socket.on('candidate', function (event) {
@@ -123,9 +121,9 @@ socket.on('candidate', function (event) {
         sdpMLineIndex: event.label,
         candidate: event.candidate
     });
-    if(event.candidate.indexOf("relay")<0){ // if no relay address is found, assuming it means no TURN server
+    /*if(event.candidate.indexOf("relay")<0){ // if no relay address is found, assuming it means no TURN server
         return;
-    }
+    }*/
     console.log('*** adding ice candidate sandy *** '+event.candidate+"***********"+event.candidate.typ+":"+event.candidate.indexOf("relay"));
     rtcPeerConnection.addIceCandidate(candidate);
 });
@@ -136,7 +134,7 @@ socket.on('ready', function () {
         rtcPeerConnection.onicecandidate = onIceCandidate;
         rtcPeerConnection.ontrack = onAddStream;
         rtcPeerConnection.addTrack(localStream.getTracks()[0], localStream);
-        //rtcPeerConnection.addTrack(localStream.getTracks()[1], localStream);
+        rtcPeerConnection.addTrack(localStream.getTracks()[1], localStream);
         dataChannel = rtcPeerConnection.createDataChannel(roomNumber)
         dataChannel.onmessage = event => { h2CallName.innerText = event.data }
         rtcPeerConnection.createOffer()
@@ -179,8 +177,8 @@ socket.on('offer', function (event) {
         rtcPeerConnection = new RTCPeerConnection(iceServers);
         rtcPeerConnection.onicecandidate = onIceCandidate;
         rtcPeerConnection.ontrack = onAddStream;
-        //rtcPeerConnection.addTrack(localStream.getTracks()[0], localStream);
-        //rtcPeerConnection.addTrack(localStream.getTracks()[1], localStream);
+        rtcPeerConnection.addTrack(localStream.getTracks()[0], localStream);
+        rtcPeerConnection.addTrack(localStream.getTracks()[1], localStream);
         rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
         rtcPeerConnection.createAnswer()
             .then(sessionDescription => {
