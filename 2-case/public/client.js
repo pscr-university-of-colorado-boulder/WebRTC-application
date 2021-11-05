@@ -32,22 +32,20 @@ var localStream;
 var remoteStream;
 var rtcPeerConnection;
 var iceServers = {
-    /*'iceServers': [
-        { 'urls': "turn:128.105.145.197:3478?transport=udp",
+    'iceServers': [
+        { 'urls': 'stun:stun.l.google.com:19302' },
+        { 'urls': "turn:128.110.217.42:3478?transport=udp",
 	   'username':"sandy",
-      	    'credential': "sandy@12345"
+      	    'credential': "sandy"
 
 	}
-    ]*/
+    ]
    /*'iceServers': [
         { 'urls': "turn:192.168.2.30:3478?transport=udp",
            'username':"sandy",
             'credential': "sandy@12345"
         }
     ]*/
-    'iceServers': [
-        { 'urls': 'stun:stun.l.google.com:19302' }
-    ]
 
 }
 
@@ -149,11 +147,12 @@ socket.on('ready', function () {
         rtcPeerConnection = new RTCPeerConnection(iceServers);
         rtcPeerConnection.onicecandidate = onIceCandidate;
         rtcPeerConnection.ontrack = onAddStream;
-        rtcPeerConnection.addTrack(localStream.getTracks()[0], localStream); //Hyoyoung : If the mediinfo has only video enable this else comment this line and use next line
+        rtcPeerConnection.addTrack(localStream.getTracks()[1], localStream); //Hyoyoung : If the mediinfo has only video enable this else comment this line and use next line
+        //rtcPeerConnection.addTrack(localStream.getTracks()[2], localStream); //Hyoyoung : If the mediinfo has only video enable this else comment this line and use next line
 	/*
 	saving video at sender side
 	*/
-	sandy_recorder(localStream,durv);
+	//sandy_recorder(localStream,durv);
 	//sandy: This is video track when video has both audio and video
         //rtcPeerConnection.addTrack(localStream.getTracks()[1], localStream);
 	//sandy: This is audio track when video has both audio and video.
@@ -331,6 +330,6 @@ function onIceCandidate(event) {
 function onAddStream(event) {
  remoteVideo.srcObject = event.streams[0];
  remoteStream = event.stream;
- sandy_recorder(event.streams[0],durv);
+ //sandy_recorder(event.streams[1],durv);
 }
 
