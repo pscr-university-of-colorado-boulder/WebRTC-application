@@ -39,13 +39,13 @@ var remoteStream;
 var rtcPeerConnection;
 let dataChannel;
 var iceServers = {
-   /*'iceServers': [
-        { 'urls': "turn:128.105.145.197?transport=udp",
+   'iceServers': [
+        { 'urls': "turn:128.110.219.29:3478?transport=udp",
            'username':"sandy",
             'credential': "sandy@12345"
 
         }
-    ]*/
+    ]
     /*'iceServers': [
         { 'urls': "turn:192.168.2.30:3478?transport=udp",
            'username':"sandy",
